@@ -1,7 +1,7 @@
 Assembly glfw
 if shared Type dynamic_lib else Type static_lib
 
-if cl Compiler cl else Compiler gcc
+if cl Compiler cl else Compiler clang
 
 CompilerFlags $SharedCompilerFlags
 LinkerFlags   $SharedLinkerFlags
