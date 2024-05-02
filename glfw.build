@@ -51,14 +51,14 @@ if _platform == apple {
     "Using Cocoa for window creation"
     Defines _GLFW_COCOA _GLFW_NSGL
 
-    IncludedSourceFiles *.m mach_time.c posix_tls.c
+    IncludedSourceFiles *.m cocoa_*.c nsgl_*.c posix_*.c
 
     Defines GL_SILENCE_DEPRECATION
  
     if menubar Defines _GLFW_USE_MENUBAR
     if chdir   Defines _GLFW_USE_CHDIR
 
-    if shared LinkerFlags -ObjC -framework Foundation -framework QuartzCore -framework AppKit -framework IOKit -framework OpenGL
+    if shared LinkerFlags -ObjC -framework Cocoa -framework Foundation -framework QuartzCore -framework AppKit -framework IOKit -framework OpenGL
 }
 
 if compiler == cl {
