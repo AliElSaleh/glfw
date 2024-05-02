@@ -1,0 +1,23 @@
+AssertCmdVarExists demo
+if cl Compiler cl else Compiler clang
+
+Assembly %Demo
+Icon glfw.ico
+
+BuildDirectory        Build
+IntermediateDirectory Intermediate/$Assembly
+
+IncludedSourceFiles  examples/%-(demo).c
+if demo == particles IncludedSourceFiles deps/getopt.c deps/tinycthread.c
+
+Includes deps include
+
+Libraries %_NativeLibs glfw
+LibraryDirectories Build/Release
+
+if _platform == windows Defines _CRT_SECURE_NO_WARNINGS
+
+AssertWorkingDirectory ..
+RunAssembly
+
+Depends glfw | release %cl
