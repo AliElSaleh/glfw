@@ -15,6 +15,7 @@ Includes deps include
 Libraries %_NativeLibs glfw
 LibraryDirectories Build/Release
 
+if _platform == apple   LinkerFlags -ObjC -framework Foundation -framework Cocoa -framework IOKit -framework QuartzCore -framework OpenGL
 if _platform == windows Defines _CRT_SECURE_NO_WARNINGS
 
 AssertWorkingDirectory ..
