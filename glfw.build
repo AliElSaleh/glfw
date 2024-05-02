@@ -1,0 +1,94 @@
+Assembly glfw
+if shared Type dynamic_lib else Type static_lib
+
+if cl Compiler cl else Compiler gcc
+
+CompilerFlags $SharedCompilerFlags
+LinkerFlags   $SharedLinkerFlags
+
+SourceDirectory src
+if release  BuildDirectory Build/Release/%%Shared
+if !release BuildDirectory Build/Debug/%%Shared
+
+IncludedSourceFiles [
+    context.c init.c input.c monitor.c window.c vulkan.c platform.c
+    egl_context.c osmesa_context.c
+    null_init.c null_monitor.c null_window.c null_joystick.c
+]
+
+Includes . include deps
+
+if !client_library          Defines _GLFW_USE_OPENGL
+if client_library == glesv1 Defines _GLFW_USE_GLESV1
+if client_library == glesv2 Defines _GLFW_USE_GLESV2
+
+Defines _CRT_SECURE_NO_WARNINGS _GLFW_VERSION_FULL=\"3.0.1\"
+
+if _platform == windows {
+    "Using Win32 for window creation"
+    Defines _GLFW_WIN32
+ 
+    IncludedSourceFiles win32_*.c winmm_*.c
+
+    if egl IncludedSourceFiles egl_*.c else IncludedSourceFiles wgl_*.c
+    if egl Defines _GLFW_EGL else Defines _GLFW_WGL
+
+    if shared Libraries kernel32 user32 opengl32 shell32 gdi32
+}
+
+if _platform == linux {
+    "Using X11 for window creation"
+    Defines _GLFW_X11
+
+    IncludedSourceFiles x11_*.c linux_*.c posix_*.c xkb_*.c
+    
+    if egl IncludedSourceFiles egl_*.c else IncludedSourceFiles glx_*.c
+    if egl Defines _GLFW_EGL else Defines _GLFW_GLX _GLFW_HAS_GLXGETPROCADDRESS
+}
+
+if _platform == apple {
+    "Using NSGL"
+    "Using Cocoa for window creation"
+    Defines _GLFW_COCOA _GLFW_NSGL
+
+    IncludedSourceFiles *.m mach_time.c posix_tls.c
+
+    Defines GL_SILENCE_DEPRECATION
+ 
+    if menubar Defines _GLFW_USE_MENUBAR
+    if chdir   Defines _GLFW_USE_CHDIR
+
+    if shared LinkerFlags -ObjC -framework Foundation -framework QuartzCore -framework AppKit -framework IOKit -framework OpenGL
+}
+
+if compiler == cl {
+    if !release SharedCompilerFlags /EHa /Z7
+    if release  SharedCompilerFlags /EHa
+
+    if !release if shared  SharedCompilerFlags /MDd
+    if release  if shared  SharedCompilerFlags /MD
+    if !release if !shared SharedCompilerFlags /MTd
+    if release  if !shared SharedCompilerFlags /MT
+
+    if !release SharedLinkerFlags /DEBUG
+}
+
+if compiler == gcc {
+    if !release SharedCompilerFlags -O0 -g
+    if release  SharedCompilerFlags -O3
+    if _platform == apple SharedCompilerFlags -fno-common
+    SharedLinkerFlags
+}
+
+if _platform == windows if shared         Defines _GLFW_BUILD_DLL
+if _platform == windows if no_dload_winmm Defines _GLFW_NO_DLOAD_WINMM
+
+# TODO _GLFW_HAS_GLXGETPROCADDRESSARB
+# TODO _GLFW_HAS_GLXGETPROCADDRESSEXT
+# TODO _GLFW_HAS_DLOPEN
+
+# libxxf86vm-dev
+# libxi-dev 
+# libxrandr-dev
+# libxcursor-dev
+# libxinerama-dev
