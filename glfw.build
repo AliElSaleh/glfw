@@ -73,7 +73,7 @@ if compiler == cl {
     if !release SharedLinkerFlags /DEBUG
 }
 
-if compiler == gcc {
+if compiler == clang {
     if !release SharedCompilerFlags -O0 -g
     if release  SharedCompilerFlags -O3
     if _platform == apple SharedCompilerFlags -fno-common
