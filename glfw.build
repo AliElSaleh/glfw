@@ -24,7 +24,7 @@ if client_library == glesv2 Defines _GLFW_USE_GLESV2
 
 Defines _CRT_SECURE_NO_WARNINGS _GLFW_VERSION_FULL=\"3.0.1\"
 
-if _platform == windows {
+if windows {
     "Using Win32 for window creation"
     Defines _GLFW_WIN32
  
@@ -36,7 +36,7 @@ if _platform == windows {
     if shared Libraries kernel32 user32 opengl32 shell32 gdi32
 }
 
-if _platform == linux {
+if linux {
     "Using X11 for window creation"
     Defines _GLFW_X11
 
@@ -46,7 +46,7 @@ if _platform == linux {
     if egl Defines _GLFW_EGL else Defines _GLFW_GLX _GLFW_HAS_GLXGETPROCADDRESS
 }
 
-if _platform == apple {
+if apple {
     "Using NSGL"
     "Using Cocoa for window creation"
     Defines _GLFW_COCOA _GLFW_NSGL
@@ -73,15 +73,15 @@ if compiler == cl {
     if !release SharedLinkerFlags /DEBUG
 }
 
-if compiler == gcc {
+if compiler == clang {
     if !release SharedCompilerFlags -O0 -g
     if release  SharedCompilerFlags -O3
     if _platform == apple SharedCompilerFlags -fno-common
     SharedLinkerFlags
 }
 
-if _platform == windows if shared         Defines _GLFW_BUILD_DLL
-if _platform == windows if no_dload_winmm Defines _GLFW_NO_DLOAD_WINMM
+if windows if shared         Defines _GLFW_BUILD_DLL
+if windows if no_dload_winmm Defines _GLFW_NO_DLOAD_WINMM
 
 # TODO _GLFW_HAS_GLXGETPROCADDRESSARB
 # TODO _GLFW_HAS_GLXGETPROCADDRESSEXT

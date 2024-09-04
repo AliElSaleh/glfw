@@ -15,10 +15,24 @@ Includes deps include
 Libraries %_NativeLibs glfw
 LibraryDirectories Build/Release
 
-if _platform == apple   LinkerFlags -ObjC -framework Foundation -framework Cocoa -framework IOKit -framework QuartzCore -framework OpenGL
-if _platform == windows Defines _CRT_SECURE_NO_WARNINGS
+if apple   LinkerFlags -ObjC -framework Foundation -framework Cocoa -framework IOKit -framework QuartzCore -framework OpenGL
+if windows Defines _CRT_SECURE_NO_WARNINGS
 
 AssertWorkingDirectory ..
 RunAssembly
 
 Depends glfw | release %cl
+
+.Help {
+    To run any of the demo apps, provide the name of a .c file in the examples/ directory
+    
+    For example:
+      riftbuild example.build demo=particles
+
+    Here's a short list of demo apps:
+      - particles
+      - wave
+      - boing
+      - heightmap
+      - gears
+}
