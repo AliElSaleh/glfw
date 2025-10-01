@@ -1,24 +1,47 @@
-Depends ../ | %release compiler=%compiler
+Depends glfw | %release compiler=%compiler
 
 Assembly %Demo
 Icon     glfw.ico
 
-SourceDirectory       ..
 BuildDirectory        Build
 IntermediateDirectory Intermediate/$Assembly
 
-SourceFiles examples/%-(demo).c
-
-Includes ../deps ../include
-
+SourceFiles  examples/%-(demo).c
 if demo == particles
 {
     SourceFiles deps/getopt.c deps/tinycthread.c
 }
 
+Includes deps include
+
+if apple
+{
+    Linker.Flags
+    [
+        -ObjC
+        -framework Foundation
+        -framework Cocoa
+        -framework IOKit
+        -framework QuartzCore
+        -framework OpenGL
+    ]
+}
+
 Defines:windows _CRT_SECURE_NO_WARNINGS
 
-#Assert.WorkingDirectory ..
-.Run
+.run
 
-option.demo(particles boing offscreen sharing splitview wave windows)
+.Help
+{
+    To run any of the demo apps, provide the name of a .c file in the examples/ directory
+    
+    For example:
+      riftbuild example.build demo=boing
+
+    Here's a short list of demo apps:
+      - particles
+      - wave
+      - boing
+      - heightmap
+      - gears
+}
