@@ -7,6 +7,7 @@ BuildDirectory        Build
 IntermediateDirectory Intermediate/$Assembly
 
 SourceFiles  examples/%-(demo).c
+
 if demo == particles
 {
     SourceFiles deps/getopt.c deps/tinycthread.c
@@ -45,3 +46,5 @@ Defines:windows _CRT_SECURE_NO_WARNINGS
       - heightmap
       - gears
 }
+
+option.demo(particles wave boing heightmap gears windows sharing offscreen)
