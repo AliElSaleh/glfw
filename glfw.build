@@ -1,0 +1,162 @@
+Assembly     glfw
+Version      3.0.1
+Type:shared  shared_library
+Type:!shared static_library
+
+Compiler.Flags $SharedCompilerFlags
+Linker.Flags   $SharedLinkerFlags
+
+SourceDirectory       src
+
+if release
+{
+    BuildDirectory        Build/Release/%%Shared
+    IntermediateDirectory Intermediate/Release/%%Shared
+}
+else
+{
+    BuildDirectory        Build/Debug/%%Shared
+    IntermediateDirectory Intermediate/Debug/%%Shared
+}
+
+SourceFiles
+[
+    context.c init.c input.c monitor.c window.c vulkan.c platform.c
+    egl_context.c osmesa_context.c
+    null_init.c null_monitor.c null_window.c null_joystick.c
+]
+
+Includes        . include deps
+Includes.Public include
+
+if client_library == opengl Defines _GLFW_USE_OPENGL
+if client_library == glesv1 Defines _GLFW_USE_GLESV1
+if client_library == glesv2 Defines _GLFW_USE_GLESV2
+
+Defines _CRT_SECURE_NO_WARNINGS _GLFW_VERSION_FULL=\"$Version\"
+
+if windows
+{
+    "Using Win32 for window creation"
+    Defines _GLFW_WIN32
+    if shared         Defines _GLFW_BUILD_DLL
+    if no_dload_winmm Defines _GLFW_NO_DLOAD_WINMM
+ 
+    SourceFiles win32_*.c winmm_*.c
+
+    if egl
+    {
+        SourceFiles egl_*.c
+        Defines _GLFW_EGL
+    }
+    else
+    {
+        SourceFiles wgl_*.c
+        Defines _GLFW_WGL
+    }
+
+    Win32Libraries kernel32 user32 opengl32 shell32 gdi32
+
+    Libraries:shared $Win32Libraries
+    Libraries.Public:!shared $Win32Libraries
+}
+
+if linux
+{
+    "Using X11 for window creation"
+    Defines _GLFW_X11
+
+    SourceFiles x11_*.c linux_*.c posix_*.c xkb_*.c
+
+    if egl
+    {
+        SourceFiles egl_*.c
+        Defines _GLFW_EGL
+    }
+    else
+    {
+        SourceFiles glx_*.c
+        Defines _GLFW_GLX _GLFW_HAS_GLXGETPROCADDRESS
+    }
+}
+
+if apple
+{
+    "Using NSGL"
+    "Using Cocoa for window creation"
+    Defines _GLFW_COCOA _GLFW_NSGL
+
+    SourceFiles *.m cocoa_*.c nsgl_*.c posix_*.c
+
+    Defines GL_SILENCE_DEPRECATION
+ 
+    if menubar Defines _GLFW_USE_MENUBAR
+    if chdir   Defines _GLFW_USE_CHDIR
+
+    if shared Linker.Flags 
+    [
+        -ObjC
+        -framework Cocoa
+        -framework Foundation
+        -framework QuartzCore
+        -framework AppKit
+        -framework IOKit
+        -framework OpenGL
+    ]
+
+    if clang
+    {
+        SharedCompilerFlags -fno-common
+    }
+}
+
+if msvc
+{
+    if release
+    {
+        SharedCompilerFlags         /EHa
+        SharedCompilerFlags:shared  /MD
+        SharedCompilerFlags:!shared /MT
+    }
+    else
+    {
+        SharedLinkerFlags /DEBUG
+
+        SharedCompilerFlags         /EHa /Z7
+        SharedCompilerFlags:shared  /MDd
+        SharedCompilerFlags:!shared /MTd
+    }
+}
+
+if clang
+{
+    if release
+    {
+        SharedCompilerFlags -O3
+
+    }
+    else
+    {
+        SharedCompilerFlags -O0 -g
+    }
+}
+
+# TODO _GLFW_HAS_GLXGETPROCADDRESSARB
+# TODO _GLFW_HAS_GLXGETPROCADDRESSEXT
+# TODO _GLFW_HAS_DLOPEN
+
+# libxxf86vm-dev
+# libxi-dev 
+# libxrandr-dev
+# libxcursor-dev
+# libxinerama-dev
+
+option.client_library(opengl glesv1 glesv2)
+option.release
+option.egl
+
+if apple
+{
+    option.chdir
+    option.menubar
+}

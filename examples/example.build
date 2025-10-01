@@ -1,0 +1,24 @@
+Depends ../ | %release compiler=%compiler
+
+Assembly %Demo
+Icon     glfw.ico
+
+SourceDirectory       ..
+BuildDirectory        Build
+IntermediateDirectory Intermediate/$Assembly
+
+SourceFiles examples/%-(demo).c
+
+Includes ../deps ../include
+
+if demo == particles
+{
+    SourceFiles deps/getopt.c deps/tinycthread.c
+}
+
+Defines:windows _CRT_SECURE_NO_WARNINGS
+
+#Assert.WorkingDirectory ..
+.Run
+
+option.demo(particles boing offscreen sharing splitview wave windows)
