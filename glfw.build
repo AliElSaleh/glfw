@@ -95,16 +95,9 @@ if apple
     if menubar Compiler.Defines _GLFW_USE_MENUBAR
     if chdir   Compiler.Defines _GLFW_USE_CHDIR
 
-    if shared Linker.Flags 
-    [
-        -ObjC
-        -framework Cocoa
-        -framework Foundation
-        -framework QuartzCore
-        -framework AppKit
-        -framework IOKit
-        -framework OpenGL
-    ]
+    Apple.Frameworks Cocoa Foundation QuartzCore AppKit IOKit OpenGL
+
+    Linker.Flags:shared -ObjC
 
     if clang
     {
